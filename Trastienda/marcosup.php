@@ -40,6 +40,9 @@
         <li class="nav-item">          
           <p><a href="CS.php">COPIAS DE SEGURIDAD</a></p>
         </li>
+        <li class="nav-item">          
+          <p><a href="salir.php">SALIR</a></p>
+        </li>
   </ul>   
   </nav>
 <?php

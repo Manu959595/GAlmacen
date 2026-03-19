@@ -50,7 +50,7 @@
 				echo "<br>- - - - - - - - - - -";
 				*/
                 // Redirecciona a la página del Backend
-                header ("Location: index-B.php");
+                header ("Location: Trastienda/index.php");
         }else { 
                 //si no existe le mando otra vez a la portada 
                 header("Location: Zdespacho.php?errorusuario=si"); 
