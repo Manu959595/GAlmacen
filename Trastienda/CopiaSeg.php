@@ -61,7 +61,6 @@ if (isset($_POST['create_backup'])) {
 
     // Ejecutar comando
     exec($command, $output, $resultCode);
-    echo $resultCode;
 
 
     // Verificar resultado
