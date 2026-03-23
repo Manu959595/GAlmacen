@@ -1,179 +1,125 @@
-<?php 	//Iniciamos código PHP
-	//Cargar el marco superior
-	require_once('marcosup.php');
+<?php   //Iniciamos código PHP
+    //Cargar el marco superior
+    require_once('marcosup.php');
 ?>
 
-<div>
-    <h1>Gestión de Usuarios Borrados</h1>    
+<div class="container-fluid mt-3">
+    <h1>Histórico de Usuarios</h1>    
+    <p class="text-muted">Usuarios que han sido dados de baja del sistema.</p>
 </div>
-<div>		
-	<?php
-	
-	// Seleccionamos la tabla con la que vamos a trabajar
-	$tabla="historico";// Escribir entre comillas el nombre de la tabla a listar
+<div class="container-fluid">       
+    <?php
+    
+    // Seleccionamos la tabla con la que vamos a trabajar
+    $tabla = "historico";
+    
+    // Aseguramos que la conexión $c existe
+    if (!isset($c)) {
+        require_once('conexion.php');
+    }
 
-	// Establecemos la sentencia SQL de la Consulta a realizar
-	$sentencia="select * from $tabla order by login ";
+    // --- --- --- Preparamos la paginación -- --- --- 
+    $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+    if ($pagina < 1) $pagina = 1;
 
-	// Ejecuta la sentencia para saber cuántas filas tiene la tabla
-    $resultado=mysqli_query($c,$sentencia);
+    // 1. Calculamos el total de registros
+    $stmt_count = $c->query("SELECT COUNT(*) as total FROM $tabla");
+    $row_count = $stmt_count->fetchArray(SQLITE3_ASSOC);
+    $numreg = $row_count['total'];
 
-	// --- --- --- Preparamos la paginación -- --- --- 
-			// comprueba si viene número de página   
-			if (isset($_GET['pagina']))
-				{
-				$pagina=$_GET['pagina'];
-				}
-				else{
-				$pagina=1;  
-				} 
-			// Calculamos el número de páginas que tenemos que usar para visualizar el resultado
-			//$numreg=mysql_num_rows($resultado);
-			$numreg=mysqli_num_rows($resultado);
-			// Como vamos a usar 8 registros por página dividimos entre 8
-			$numpag= ceil($numreg/8);    
-			
-			// Calcula cuál será el registro de inicio para construir la consulta
-			$inicio=($pagina-1)*8;
-			
-			// Volvemos a ejecutar la sentencia pero fijando los límites.
-			$sentencia .=" limit ".$inicio.", 8";
-            $resultado=mysqli_query($c,$sentencia);
-			//echo "<hr>$sentencia<hr>";
-			// --- --- --- --- --- --- --- --- --- --- --- ---
-	
-	// Dibujamos una tabla HTML para mostrar los valores almacenados
-	echo '<table border style="width:90%; margin-left:20px; margin-right:40px; background-color: pink;">';
-	
-	// Recopilar los nombres de las columnas de la tabla seleccionada
-	$cabeceras=mysqli_query($c,"SHOW FIELDS FROM $tabla");
-	
-	// Construye la fila de cabeceras
-	echo "<tr bgcolor='silver'>";
-	while ($cab=mysqli_fetch_row($cabeceras)){
-		echo "<th>$cab[0]</th>";
-	}
-	echo "<th></th>";				
-	echo "<th>";
-	// Formulario para enviar los datos
-	/*	echo '<form name="alta" method="POST" action="AUsuarios.php">';
-		//echo '<input type="hidden" name="codigo" value="'.$registro[0].'">';
-		echo '<input type="image" src="estilos/mas.jpg" height="20px" title="Alta de usuario.">';
-		echo '</form>';
-		*/
-	echo "</th>";
-	echo "<th></th>";
-	echo "</tr>";
-	
-	// Recopilar las filas almacenadas en la tabla
-	$resultado=mysqli_query($c,$sentencia);
-	
-	// Recorremos $resultado mostrando cada fila de la tabla
-	while ($registro = mysqli_fetch_row($resultado)){
-		
-		// Iniciamos la fila
-		echo "<tr>";
-		
-		// Iniciar un contador de columnas
-		$i=0;
-		
-		// Recorremos y mostramos el valor de cada columna
-		foreach ($registro as $fila){
-			
-			// Mostramos el valor de cada celda y si es la imagen la visualiza
-			if ($i==7){
-				echo "<td> <img src='$registro[$i]' height='30'></td>";
-				$foto = $registro[7];
-			} else{
-				echo "<td> $registro[$i]</td>";
-			}
-			
-			
-			// Incrementamos el contador de columnas
-			$i++;
-		}							
-		echo "<td align='center'>";	
-			// Para ver solo un registro.
-				// Formulario para enviar los datos
-				echo '<form name="veruno" method="POST" action="VerUnHistorico.php">';
-				echo '<input type="hidden" name="id" value="'.$registro[1].'">';
-				echo '<input type="image" src="estilos/ver.jpg" title="Ver datos del usuario... '.$registro[1].'">';
-				echo '</form>';	
-			echo "</td><td align='center'>";	
-			// Para borrar un registro.
-			// Formulario para enviar los datos
-				echo '<form name="borraruno" method="POST" action=BorraUnHistorico.php">';
-				echo '<input type="hidden" name="id" value="'.$registro[1].'">';
-				echo '<input type="image" src="estilos/papelera.jpg" title="Borrar el usuario definitivamente... '.$registro[1].'">';
-				echo '</form>';
-			echo "</td><td align='center'>";		
-			// Para modificar un registro.
-			// Formulario para enviar los datos de vuelta a la tabla USUARIOS
-				echo '<form name="restaurar" method="POST" action="RestauraUsuario.php">';
-				echo '<input type="hidden" name="id" value="'.$registro[1].'">';
-				echo '<input type="hidden" name="imagen" value="'.$foto.'">';
-				echo '<input type="image" src="estilos/revierte.jpg" title="Restaurar el usuario. Sale del Histórico. '.$registro[1].'">';
-				echo '</form>';	
-							
-		echo "</td>";   	
-		
-		// Fin de la fila
-		echo "</tr>";				
-	}
-	
-		// Fin de la tabla HTML
-	echo "</table>";
-	
-	// --- --- --- --- --- --- --- --- --- --- --- ---
-	// --- Mostramos el paginador ---       
-	// Calcula páginas anterior y siguiente
-	echo "<div><hr>";
-	if ($pagina==1){
-		$anterior=1;
-	}
-	else{
-		$anterior=$pagina-1;
-	}
-	if ($pagina==$numpag){
-		$siguiente=$pagina;
-	}
-	else{
-		$siguiente=$pagina+1;
-	}
-	
-	echo "<div class='col-md-12 text-center'>"; // Fin de la capa row  
-	echo '<ul class="pagination justify-content-center ">';
-	echo '	<li class="page-item ">';
-	echo '	  <a class="page-link" href="GHistorico.php?pagina='.$anterior.'">&laquo;</a>';
-	echo '	</li>';
-	for ($i=1;$i<=$numpag;$i++)
-	{
-		if($i==$pagina){
-				echo '	<li class="page-item active">';
-				echo '	  <a class="page-link"href="GHistorico.php?pagina='.$i.'">'.$i.'</a>';
-				echo '	</li>';						
-			}
-			else{
-				echo '	<li class="page-item"><a class="page-link" href="GHistorico.php?pagina='.$i.'">'.$i.'</a></li>';
-			}
-	}
-	echo '	<li class="page-item ">';
-	echo '	  <a class="page-link" href="GHistorico.php?pagina='.$siguiente.'">&raquo;</a>';
-	echo '	</li>';
-	echo '  </ul>';
-	echo "</div>";
-	// --- Fin paginación ---
-	// --- --- --- --- --- --- --- --- --- --- --- ---
-	
-	// Cerramos la conexión con la base de datos
-	mysqli_close($c);
-	
-	?>   
+    $numpag = ceil($numreg / 8);    
+    $inicio = ($pagina - 1) * 8;
+    
+    // 2. Sentencia SQL (En el histórico no solemos editar, solo ver o borrar)
+    $sentencia = "SELECT * FROM $tabla LIMIT 8 OFFSET $inicio";
+    $resultado = $c->query($sentencia);
+    // --- --- --- --- --- --- --- --- --- --- --- ---
+    
+    // Dibujamos la tabla
+    echo '<div class="table-responsive">';
+    echo '<table class="table table-bordered table-striped table-hover mt-3 w-100">';
+    
+    // 3. Cabeceras
+    $cabeceras = $c->query("PRAGMA table_info($tabla)");
+    
+    echo "<thead class='table-dark'><tr>";
+    while ($cab = $cabeceras->fetchArray(SQLITE3_ASSOC)){
+        echo "<th class='text-center align-middle'>" . strtoupper($cab['name']) . "</th>";
+    }
+    
+    // Acciones para el Histórico (Ver y Borrar Permanente)
+    echo "<th colspan='2' class='text-center align-middle'>ACCIONES</th>";
+    echo "</tr></thead><tbody>";
+    
+    // Recorremos filas
+    while ($registro = $resultado->fetchArray(SQLITE3_NUM)){
+        
+        echo "<tr>";
+        $num_columnas = count($registro);
+        
+        for ($i = 0; $i < $num_columnas; $i++) {
+            // Lógica para la imagen del usuario (índice 7 en tu tabla original)
+            if ($i == 7){
+                $ruta_foto = empty($registro[$i]) ? 'estilos/iconopersona.png' : $registro[$i];
+                echo "<td class='text-center align-middle'> <img src='../$ruta_foto' height='40' class='rounded-circle shadow-sm'></td>";
+            } else {
+                echo "<td class='align-middle text-center'>" . htmlspecialchars($registro[$i]) . "</td>";
+            }
+        }                           
+        
+        // El ID para acciones (usamos el login, índice 1)
+        $id_hist = htmlspecialchars($registro[1]);
+        
+        // Botón VER
+        echo "<td class='text-center align-middle' style='width: 40px;'>"; 
+            echo '<form name="veruno" method="POST" action="VerHistorico.php" class="m-0">';
+            echo '<input type="hidden" name="id" value="'.$id_hist.'">';
+            echo '<input type="image" src="estilos/ver.jpg" height="25" title="Ver detalle">';
+            echo '</form>'; 
+        echo "</td>";
+        
+        // Botón BORRAR PERMANENTE
+        echo "<td class='text-center align-middle' style='width: 40px;'>";    
+            echo '<form name="borraruno" method="POST" action="BorraUnHistorico.php" class="m-0" onsubmit="return confirm(\'¿Desea eliminar permanentemente a '.$id_hist.' del histórico?\');">';
+            echo '<input type="hidden" name="id" value="'.$id_hist.'">';
+            echo '<input type="image" src="estilos/papelera.jpg" height="25" title="Eliminar permanentemente">';
+            echo '</form>';
+        echo "</td>";
+        
+        echo "</tr>";               
+    }
+    
+    echo "</tbody></table></div>";
+    
+    // --- Paginación ---       
+    echo "<div class='mt-4'>";
+    $anterior = ($pagina == 1) ? 1 : $pagina - 1;
+    $siguiente = ($pagina == $numpag) ? $numpag : $pagina + 1;
+    
+    if ($numpag > 1) {
+        echo "<div class='col-md-12 text-center'>"; 
+        echo '<ul class="pagination justify-content-center">';
+        echo '<li class="page-item ' . ($pagina == 1 ? 'disabled' : '') . '">';
+        echo '<a class="page-link" href="Ghistorico.php?pagina='.$anterior.'">&laquo;</a>';
+        echo '</li>';
+        
+        for ($i = 1; $i <= $numpag; $i++) {
+            $active = ($i == $pagina) ? 'active' : '';
+            echo '<li class="page-item '.$active.'"><a class="page-link" href="Ghistorico.php?pagina='.$i.'">'.$i.'</a></li>';
+        }
+        
+        echo '<li class="page-item ' . ($pagina == $numpag ? 'disabled' : '') . '">';
+        echo '<a class="page-link" href="Ghistorico.php?pagina='.$siguiente.'">&raquo;</a>';
+        echo '</li>';
+        echo '</ul>';
+        echo "</div>";
+    }
+    echo "</div>"; 
+    
+    $c->close();
+    ?>   
 </div>
+
 <?php
-	//Iniciamos código PHP
-	//Cargar el marco inferior
-	require_once('marcoinf.php');
-	// Fin del código PHP
-?>  
-  
+    require_once('marcoinf.php');
+?>

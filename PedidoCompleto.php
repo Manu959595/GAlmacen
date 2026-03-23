@@ -9,7 +9,7 @@
       <div class="container">
         <div class="row text-center">
 		      <div class="text-center mx-auto col-10">
-               <h2>VALOR ACTUAL DEL ALMACÉN: </h2>	
+               <h2>PEDIDOS COMPLETOS: </h2>	
             </div>
 		   </div>		
 		</div>	
@@ -19,7 +19,7 @@
                <?php
                
                // Seleccionamos la tabla con la que vamos a trabajar
-               $tabla="valoralmacen";// Escribir entre comillas el nombre de la tabla a listar
+               $tabla="pedidos";// Escribir entre comillas el nombre de la tabla a listar
                
                // Establecemos la sentencia SQL de la Consulta a realizar
                $sentencia="select * from $tabla";
@@ -137,21 +137,21 @@
                     echo "<div class='col-md-12 text-center'>"; // Fin de la capa row  
                     echo '<ul class="pagination justify-content-center ">';
                     echo '	<li class="page-item ">';
-                    echo '	  <a class="page-link" href="ValorAlmacen.php?pagina='.$anterior.'">&laquo;</a>';
+                    echo '	  <a class="page-link" href="PedidoCompleto.php?pagina='.$anterior.'">&laquo;</a>';
                     echo '	</li>';
                     for ($i=1;$i<=$numpag;$i++)
                     {
                         if($i==$pagina){
                                 echo '	<li class="page-item active">';
-                                echo '	  <a class="page-link"href="ValorAlmacen.php?pagina='.$i.'">'.$i.'</a>';
+                                echo '	  <a class="page-link"href="PedidoCompleto.php?pagina='.$i.'">'.$i.'</a>';
                                 echo '	</li>';						
                             }
                             else{
-                                echo '	<li class="page-item"><a class="page-link" href="ValorAlmacen.php?pagina='.$i.'">'.$i.'</a></li>';
+                                echo '	<li class="page-item"><a class="page-link" href="PedidoCompleto.php?pagina='.$i.'">'.$i.'</a></li>';
                             }
                     }
                     echo '	<li class="page-item ">';
-                    echo '	  <a class="page-link" href="ValorAlmacen.php?pagina='.$siguiente.'">&raquo;</a>';
+                    echo '	  <a class="page-link" href="PedidoCompleto.php?pagina='.$siguiente.'">&raquo;</a>';
                     echo '	</li>';
                     echo '  </ul>';
                     

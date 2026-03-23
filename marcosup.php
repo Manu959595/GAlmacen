@@ -38,9 +38,11 @@
             <li><a class="dropdown-item text-info-emphasis" href="ValorPais.php">VALOR POR PAÍS</a></li>
             <li><a class="dropdown-item text-info-emphasis" href="ValorProductosPais.php">PRODUCTOS POR PAÍS</a></li>  
            
-            <li><a class="dropdown-item text-info-emphasis" href="#" target="_blank">Consulta VISTA</a></li>  
+            <li><a class="dropdown-item text-info-emphasis" href="GeneraPedido.php" target="_blank">GENERA PEDIDOS</a></li>  
             <li class="dropdown-divider"></li>            
-            <li><a class="dropdown-item text-info-emphasis" href="#">Consulta VISTA</a></li>
+            <li><a class="dropdown-item text-info-emphasis" href="PedidoProveedor.php">GENERA PEDIDO PROVEEDOR</a></li>
+            <li><a class="dropdown-item text-info-emphasis" href="PedidoCompleto.php">PEDIDO COMPLETO</a></li>
+
           </ul>
         </li>
         <li class="nav-item dropdown">
